@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>First Homework</title>
+</head>
+<style>
+    /*css样式*/
+    .block{
+        margin: 2%;
+        width: 30%;
+    }
+    .btn{
+        padding: 5px;
+        margin: 0;
+        border: none;
+        background-color: white;
+        cursor: pointer;
+        font-size: 20px;
+        font-family: Consolas,serif;
+    }
+    .btn2{
+        padding: 5px;
+        margin: 0;
+        border: none;
+        background-color: white;
+        font-size: 20px;
+        font-family: Consolas,serif;
+    }
+    .btn:hover{
+        background-color: silver;
+        transition: 0.2s;
+    }
+    .block-inside{
+        background-color: white;
+    }
+</style>
+
+<body>
+<div class="block"><!-- 一个大块 /!-->
+    <div><!-- 这里用的是button 还可以用ul li的组合/!-->
+        <button class="btn" onclick="change('1')">
+            图片1
+        </button>
+        <button class="btn" onclick="change('2')">
+            图片2
+        </button>
+        <button class="btn" onclick="change('3')">
+            图片3
+        </button>
+    </div>
+    <div class="block-inside">
+        <img src="hmk1/pic1.jpg" alt="Pic1 is Showing" style="height: 100%;width:100%;margin-top:20px; " id="pict">
+        <p class="btn2" id="text">This is picture 1</p>
+    </div>
+</div>
+
+
+</body>
+<script>
+    /*change 函数根据传入参数复用*/
+    function change(name)
+    {
+        var picSrc = "hmk1/pic"+name+'.jpg';
+        var element=document.getElementById('pict');
+        element.src=picSrc;
+        element=document.getElementById('text');
+        element.textContent="This is picture " + name;
+    }
+
+
+</script>
+</html>
