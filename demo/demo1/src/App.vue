@@ -2,11 +2,17 @@
   <div>
     <h1>ToDoList</h1>
     <to-do-form @todo-added="addToDo"></to-do-form>
+
     <h2 id="list-summary">{{listSummary}}</h2>
     <ul class="stack-large">
       <li v-for="item in Items" :key="item.id">
 
-        <to-do-item @update-done="update" :label="item.label" :key="item.id" :done="item.done">
+        <to-do-item @update-done="update($event.childData,item)"
+                    :label="item.label"
+                    :key="item.id"
+                    :done="item.done"
+                    @item-deleted="deleteToDo(item.id,item.done)"
+                    @item-edited="editToDo(item.id, $event)">
 
         </to-do-item>
       </li>
@@ -21,11 +27,18 @@ import ToDoItem from "@/components/ToDoItem.vue";
 import ToDoForm from "@/components/ToDoForm.vue";
 import {computed, ref} from "vue";
 import {nanoid} from "nanoid";
-
+const deleteToDo=(toDoId,ifDone)=>{
+  const itemIndex = Items.value.findIndex((item) => item.id === toDoId);
+  Items.value.splice(itemIndex, 1);
+  if(ifDone)confirmed.value-=1;
+}
+const editToDo=(toDoId, newLabel)=> {
+  const toDoToEdit = Items.value.find((item) => item.id === toDoId);
+  toDoToEdit.label = newLabel;
+}
 const Items=ref([
 ]);
 const addToDo=(label)=>{
-  console.log(label.value),
   Items.value.push({
     id:nanoid(8),
     label: label.value,
@@ -40,9 +53,9 @@ const listSummary=computed(()=>{
   const numberFinishedItems = confirmed.value
   return `${numberFinishedItems} out of ${Items.value.length} items completed`
 })
-const update=(value)=>{
-  console.log(value)
-  if(value)confirmed.value+=1;
+const update=(childData,value)=>{
+  value.done=childData
+  if(childData)confirmed.value+=1;
   else confirmed.value-=1;
 }
 </script>

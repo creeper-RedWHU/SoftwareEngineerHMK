@@ -1,21 +1,38 @@
 
 <template>
-  <div >
+  <div class="stack-small" v-if="!isEditing">
+    <div class="custom-checkbox">
     <input type="checkbox"
            :id="id"
            :checked="isDone"
             @change="handleCheckboxChange"
-            @click="addd"/>
-    <label :for="id" >
+            @click="addd"
+            />
+    <label :for="id" class="checkbox-label">
 <!--      {{id}}{{isDone}};;;;{{jd}}-->
       {{label}}
     </label>
+    </div>
+    <div class="btn-group">
+      <button type="button" class="btn" @click="toggleToItemEditForm" >
+        Edit <span class="visually-hidden">{{label}}</span>
+      </button>
+      <button type="button" class="btn btn__danger" @click="deleteToDo">
+        Delete <span class="visually-hidden">{{label}}</span>
+      </button>
+    </div>
   </div>
+  <to-do-item-edit-form v-else :id="id" :label="label"
+  @item-edited="itemEdited"
+  @item-cancelled="editCancelled">
+  </to-do-item-edit-form>
+
 </template>
 
 <script setup>
 import { defineProps, ref, watch, watchEffect ,defineEmits} from 'vue'
 import { nanoid } from 'nanoid'
+import ToDoItemEditForm from "@/components/ToDoItemEditForm.vue";
 
 const props = defineProps({
   label: {
@@ -27,10 +44,10 @@ const props = defineProps({
     default: false
   }
 })
-
+const isEditing=ref(false)
 // 状态管理修正
 const isDone = ref(props.done)
-const emit = defineEmits(['update:done']) // 新增事件发射
+const emit = defineEmits(['update-done','item-deleted','item-edited']) // 新增事件发射
 
 
 
@@ -49,7 +66,7 @@ const addd=()=>{
 const handleCheckboxChange = (e) => {
 
   isDone.value  = e.target.checked
-  emit('update-done', isDone.value)  // 同步父组件状态
+  emit('update-done', {childData:isDone.value})  // 同步父组件状态
 }
 
 // 动态ID生成修正
@@ -59,8 +76,19 @@ watchEffect(() => {
   id.value  = `todo-${nanoid(8)}`
 })
 
-
-
+const deleteToDo=()=>{
+    emit('item-deleted');
+}
+const toggleToItemEditForm=()=> {
+  isEditing.value=true;
+}
+const itemEdited=(newLabel)=>{
+  emit('item-edited',newLabel)
+  isEditing.value=false;
+}
+const editCancelled=()=>{
+  isEditing.value=false;
+}
 </script>
 
 
